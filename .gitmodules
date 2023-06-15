@@ -1,0 +1,3 @@
+[submodule "popart"]
+	path = popart
+	url = https://github.com/jessicawleigh/popart
