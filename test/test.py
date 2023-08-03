@@ -25,6 +25,5 @@ seqs = [
 	["seq_10b", "ATATACGGGGTAATC", "Homo_altaiensis"      ],
 ]
 
-print("\n")
 g = pn.calcGraph(seqs, 0)
 print(g)

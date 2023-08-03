@@ -77,83 +77,16 @@ void fillSequences(std::vector<Sequence*>& seqs){
 		seqs[i]->setSeq(seq);
 	}
 }
-std::vector<std::vector<Sequence*>> packSequences(std::vector<Sequence*> const& seqs){
-	std::vector<std::vector<Sequence*>> pack;
-	for(Sequence* s: seqs){
-		for(std::vector<Sequence*>& packSeq: pack)
-			if(s->seq() == packSeq.front()->seq()){
-				packSeq.push_back(s);
-				goto packNextSeq;
-			}
-		pack.push_back(std::vector<Sequence*>{});
-		pack.back().push_back(s);
-packNextSeq:
-		continue;
-	}
-	return pack;
-}
-std::map<std::string, int> getColors(std::vector<std::vector<Sequence*>>& pack, std::map<Sequence*, std::string>& coloring, size_t index){
-	std::map<std::string, int> colors;
-
-	for(Sequence* s: pack[index]){
-		if(!colors.count(coloring[s]))
-			colors[coloring[s]] = 0;
-		++colors[coloring[s]];
-	}
-
-	return colors;
-}
-std::map<std::string, int> getColors(std::vector<std::vector<Sequence*>>& pack, std::map<Sequence*, std::string>& coloring, std::string seqName){
-	for(size_t i = 0; i < pack.size(); ++i)
-		for(Sequence* s: pack[i])
-			if(s->name() == seqName)
-				return getColors(pack, coloring, i);
-	assert(false);
-	return std::map<std::string, int>{};
-}
-
-void test(){
-	std::vector<Sequence*> seqs = testSequences1();
-	std::map<Sequence*, std::string> coloring = colorsFromMoID(seqs);
-	//std::map<Sequence*, std::string> coloring = testColors(seqs);
-
-	HapNet* g = new MedJoinNet(seqs, std::vector<bool>{}, 0);
-	g->setupGraph();
-	std::cout << std::endl;
-
-	std::cout << *g;
-
-	fillSequences(seqs);
-	std::vector<std::vector<Sequence*>> pack = packSequences(seqs);
-	for(std::vector<Sequence*>& packSeq: pack){
-		printf("%s\n", packSeq.front()->seq().c_str());
-		for(Sequence* s: packSeq)
-			printf("%s\n", s->name().c_str());
-		printf("\n");
-	}
-	std::map<std::string, int> colors = getColors(pack, coloring, "seq_6b");
-	//std::map<std::string, int> colors = getColors(pack, coloring, 6);
-	for(std::pair<std::string, int> color: colors)
-		printf("%s: %i\n", color.first.c_str(), color.second);
-
-	delete g;
-	for(Sequence* s: seqs)
-		delete s;
-	seqs.clear();
-}
 
 int main(int argc, char* argv[]){
-	//printf("Hello popart!\n");
-
-	//test();
-	//printf("\n");
-
 	std::vector<Sequence*> seqs = testSequences1();
+
 	SeqGraph sg{seqs, MED_JOIN_NET};
 	sg.calc();
 	sg.print();
 
 	for(Sequence* s: seqs)
 		delete s;
+
 	return 0;
 }

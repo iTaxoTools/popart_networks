@@ -114,37 +114,3 @@ void SeqGraph::print() const{
 		printf("%-15s %s\n", c.first->name().c_str(), c.second.c_str());
 }
 
-std::vector<std::vector<Sequence*>> temppackSequences(std::vector<Sequence*> const& seqs){
-	std::vector<std::vector<Sequence*>> pack;
-	for(Sequence* s: seqs){
-		for(std::vector<Sequence*>& packSeq: pack)
-			if(s->seq() == packSeq.front()->seq()){
-				packSeq.push_back(s);
-				goto packNextSeq;
-			}
-		pack.push_back(std::vector<Sequence*>{});
-		pack.back().push_back(s);
-packNextSeq:
-		continue;
-	}
-	return pack;
-}
-std::map<std::string, int> tempgetColors(std::vector<std::vector<Sequence*>>& pack, std::map<Sequence*, std::string>& coloring, size_t index){
-	std::map<std::string, int> colors;
-
-	for(Sequence* s: pack[index]){
-		if(!colors.count(coloring[s]))
-			colors[coloring[s]] = 0;
-		++colors[coloring[s]];
-	}
-
-	return colors;
-}
-std::map<std::string, int> tempgetColors(std::vector<std::vector<Sequence*>>& pack, std::map<Sequence*, std::string>& coloring, std::string seqName){
-	for(size_t i = 0; i < pack.size(); ++i)
-		for(Sequence* s: pack[i])
-			if(s->name() == seqName)
-				return tempgetColors(pack, coloring, i);
-	assert(false);
-	return std::map<std::string, int>{};
-}
