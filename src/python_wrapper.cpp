@@ -124,7 +124,6 @@ PyObject* calcGraph(PyObject* self, PyObject* args){
 	SeqGraph g{seqs, (PopartNetworkAlgo)algo};
 	g.coloring = coloring;
 	g.calc();
-	g.print();
 
 	PyObject* graphList = calcGraphOutput(g);
 
