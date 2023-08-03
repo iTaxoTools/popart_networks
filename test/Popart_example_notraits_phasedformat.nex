@@ -1,0 +1,85 @@
+#NEXUS
+[This is an example of a Nexus file, modified from a sample file distributed 
+with DNASP. It should run in PopART. Any text appearing between square braces is
+a comment and will be ignored by the program.]
+
+
+BEGIN TAXA;
+[You need either taxa and characters blocks, or else a data block.]
+DIMENSIONS NTAX=20;
+
+TAXLABELS
+seq_1a
+seq_1b
+seq_2a
+seq_2b
+seq_3a
+seq_3b
+seq_4a
+seq_4b
+seq_5a
+seq_5b
+seq_6a
+seq_6b
+seq_7a
+seq_7b
+seq_8a
+seq_8b
+seq_9a
+seq_9b
+seq_10a
+seq_10b
+;
+
+END;
+
+BEGIN CHARACTERS;
+[You can either use the matchchar option or else include all characters for 
+all sequences.]
+DIMENSIONS NCHAR=15;
+FORMAT DATATYPE=DNA MISSING=? GAP=- MATCHCHAR=. ;
+MATRIX
+
+seq_1a ATATACGGGGTTATC
+
+seq_1b ATATACGGTGTTATC
+
+seq_2a TTATACGGTGTTATC
+
+seq_2b TTATACGGGGTTATC
+
+seq_3a ATCTACGGGGTTATC
+
+seq_3b ATATTCGGGATTATC
+
+seq_4a ATATACGGGGTAATC
+
+seq_4b ATATACGGGGTAATC
+
+seq_5a ATATACGGGGTAATC
+
+seq_5b ATATACGGGGTAATC
+
+seq_6a ATATACGGGGTAATC
+
+seq_6b ATATACGGGGTAATC
+
+seq_7a ATATACGGGGTAATC
+
+seq_7b ATATACGGGGTAATC
+
+seq_8a ATATACGGGGTAATC
+
+seq_8b ATATACGGGGTAATC
+
+seq_9a ATATACGGGGTAATC
+
+seq_9b ATATACGGGGTAATC
+
+seq_10a ATATACGGGGTAATC
+
+seq_10b ATATACGGGGTAATC
+;
+
+END;
+

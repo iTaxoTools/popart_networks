@@ -1,28 +1,69 @@
-workspace("Popart_Graphs")
+workspace("Popart_Networks")
 	configurations({"debug", "release"})
 
+	newoption({
+		trigger = "kind",
+		category = "Custom",
+		description = "Kind of binary when building",
+		default = "shared",
+		allowed = {
+			{"exe", "Executable"},
+			{"static", "Static library"},
+			{"shared", "Shared library"},
+		}
+	})
+	newoption({
+		trigger = "nopython",
+		category = "Custom",
+		description = "Disable Python bindings"
+	})
+	newoption({
+		trigger = "pythonversion",
+		category = "Custom",
+		description = "Python version to link against for non-Windows systems",
+		default = "3.11"
+	})
 
-	project("popart_graphs")
-		kind("ConsoleApp")
+	project("popart_networks")
+		filter("options:kind=exe")
+			kind("ConsoleApp")
+		filter("options:kind=static")
+			kind("StaticLib")
+		filter("options:kind=shared")
+			kind("SharedLib")
+		filter("options:*")
 		language("C++")
 		cppdialect("C++17")
 
 		includedirs({
 			"include",
-			"popart/src/tree",
+			"popart/src",
 		})
+		filter({"system:not windows"})
+			includedirs("/usr/include/python" .. _OPTIONS["pythonversion"])
+		filter({})
 		files({
-			--"src/*.cpp",
-			"popart/src/testgraphs.cpp"
+			"src/*.cpp",
+			--"popart/src/testgraphs.cpp"
 		})
+		filter({"not options:nopython", "system:windows"})
+			removefiles({
+				"src/python_wrapper.cpp",
+			})
+		filter({})
 
 		location("build")
 		--targetdir("build/bin/${cfg.buildcfg}")
-		--targetname("popart_graphs")
+		--targetname("popart_networks")
 		filter({})
 		links({
 			"popart"
 		})
+		filter({"not options:nopython", "system:windows"})
+			links("python3")
+		filter({"not options:nopython", "system:not windows"})
+			links("python" .. _OPTIONS["pythonVersion"])
+		filter({})
 		--pic("On")
 		linkoptions({})
 		warnings("Extra")
