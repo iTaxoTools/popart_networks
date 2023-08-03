@@ -46,25 +46,29 @@ PyObject* calcGraphOutput(SeqGraph const& g){
 
 		for(size_t j = 0; j < v.seqs.size(); ++j){
 			Sequence* s = v.seqs[j];
+			std::string c = g.coloring.at(s);
 
-			PyObject* pyVSeq = PyList_New(3);
+			PyObject* pyVSeq = PyList_New(c.size() ? 3 : 2);
 			PyList_SetItem(pyVSeqs, j, pyVSeq);
 
 			PyObject* pyVSeqName = PyUnicode_FromString(s->name().c_str());
 			PyObject* pyVSeqData = PyUnicode_FromString(s->seq().c_str());
-			PyObject* pyVSeqPop  = PyUnicode_FromString(g.coloring.at(s).c_str());
 			PyList_SetItem(pyVSeq, 0, pyVSeqName);
 			PyList_SetItem(pyVSeq, 1, pyVSeqData);
-			PyList_SetItem(pyVSeq, 2, pyVSeqPop);
+			if(c.size()){
+				PyObject* pyVSeqPop  = PyUnicode_FromString(c.c_str());
+				PyList_SetItem(pyVSeq, 2, pyVSeqPop);
+			}
 		}
 
-		PyObject* pyVPops = PyList_New(v.pops.size());
+		PyObject* pyVPops = PyList_New(0);
 		PyList_SetItem(pyV, 1, pyVPops);
 
-		size_t j = 0;
 		for(std::pair<std::string, int> pop: v.pops){
+			if(!pop.first.size())
+				continue;
 			PyObject* pyVPop = PyList_New(2);
-			PyList_SetItem(pyVPops, j++, pyVPop);
+			PyList_Append(pyVPops, pyVPop);
 
 			PyObject* pyVPopName  = PyUnicode_FromString(pop.first.c_str());
 			PyObject* pyVPopCount = PyLong_FromLong(pop.second);
