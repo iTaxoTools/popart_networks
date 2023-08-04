@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import popart_networks as pn
+from itaxotools import popart_networks as pn
 
 seqs = [
 	["seq_1a",  "ATATACGGTGTTATC", "Pan_troglodytes"      ],

@@ -10,7 +10,7 @@ static PyMethodDef pnFuncs[]{
 };
 static struct PyModuleDef pnModule{
 	PyModuleDef_HEAD_INIT,
-	"popart_networks",
+	"_popart_networks",
 	NULL,
 	-1,
 	pnFuncs,
@@ -20,7 +20,7 @@ static struct PyModuleDef pnModule{
 	0
 };
 
-PyMODINIT_FUNC PyInit_popart_networks(){
+PyMODINIT_FUNC PyInit__popart_networks(){
 	return PyModule_Create(&pnModule);
 }
 
