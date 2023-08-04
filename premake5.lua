@@ -68,8 +68,8 @@ workspace("Popart_Networks")
 		architecture(_OPTIONS["arch"])
 
 		includedirs({
-			"include",
-			"popart/src",
+			"src/itaxotools/_popart_networks/include",
+			"src/popart/src",
 		})
 
 		if _OPTIONS["includedirs"] then
@@ -88,12 +88,12 @@ workspace("Popart_Networks")
 			includedirs("/usr/include/python" .. _OPTIONS["pythonversion"])
 		filter({})
 		files({
-			"src/*.cpp",
+			"src/itaxotools/_popart_networks/src/*.cpp",
 			--"popart/src/testgraphs.cpp"
 		})
 		filter({"not options:nopython", "system:windows"})
 			removefiles({
-				"src/python_wrapper.cpp",
+				"src/itaxotools/_popart_networks/src/python_wrapper.cpp",
 			})
 		filter({"options:disableintnj"})
 			defines({"DISABLE_INTNJ"})
@@ -154,18 +154,18 @@ workspace("Popart_Networks")
 		architecture(_OPTIONS["arch"])
 
 		includedirs({
-			"popart/src/networks",
-			"popart/src/tree",
-			"popart/src/seqio",
+			"src/popart/src/networks",
+			"src/popart/src/tree",
+			"src/popart/src/seqio",
 		})
 		files({
-			"popart/src/networks/*.cpp",
-			"popart/src/tree/*.cpp",
-			"popart/src/seqio/*.cpp",
+			"src/popart/src/networks/*.cpp",
+			"src/popart/src/tree/*.cpp",
+			"src/popart/src/seqio/*.cpp",
 		})
 
 		filter({"options:disableintnj"})
-			removefiles({"popart/src/networks/IntNJ.cpp"})
+			removefiles({"src/popart/src/networks/IntNJ.cpp"})
 		filter({})
 		filter({"not options:disableintnj"})
 			links({"lpsolve55"})
