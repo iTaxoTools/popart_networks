@@ -18,15 +18,41 @@ workspace("Popart_Networks")
 		description = "Disable Integer NJ Network from popart"
 	})
 	newoption({
-		trigger = "nopython",
+		trigger = "includedirs",
 		category = "Custom",
-		description = "Disable Python bindings"
+		description = "List of include directories separated by semicolons"
+	})
+	newoption({
+		trigger = "libdirs",
+		category = "Custom",
+		description = "List of library directories separated by semicolons"
+	})
+	newoption({
+		trigger = "target",
+		category = "Custom",
+		description = "The produced library is copied here"
+	})
+	newoption({
+		trigger = "arch",
+		category = "Custom",
+		description = "Target architecture",
+		default = "x86_64",
+		allowed = {
+			{"x86", "x86/x32, 32 bit architecture"},
+			{"x86_64", "x86_64/x64, 64 bit architecture"},
+			{"arm64", "arm64, 64 bit architecture"},
+		}
 	})
 	newoption({
 		trigger = "pythonversion",
 		category = "Custom",
 		description = "Python version to link against for non-Windows systems",
 		default = "3.11"
+	})
+	newoption({
+		trigger = "nopython",
+		category = "Custom",
+		description = "Disable Python bindings"
 	})
 
 	project("popart_networks")
@@ -39,11 +65,25 @@ workspace("Popart_Networks")
 		filter("options:*")
 		language("C++")
 		cppdialect("C++17")
+		architecture(_OPTIONS["arch"])
 
 		includedirs({
 			"include",
 			"popart/src",
 		})
+
+		if _OPTIONS["includedirs"] then
+			for path in string.gmatch(_OPTIONS["includedirs"], "[^;]+") do
+			  includedirs { path }
+			end
+		end
+
+		if _OPTIONS["libdirs"] then
+			for path in string.gmatch(_OPTIONS["libdirs"], "[^;]+") do
+			  libdirs { path }
+			end
+		end
+
 		filter({"system:not windows"})
 			includedirs("/usr/include/python" .. _OPTIONS["pythonversion"])
 		filter({})
@@ -93,11 +133,25 @@ workspace("Popart_Networks")
 			optimize("Full")
 			--symbols("Off")
 
+		if _OPTIONS["target"] then
+			filter({"not system:windows"})
+				postbuildcommands {
+					"{COPYFILE} %{cfg.buildtarget.relpath} " .. _OPTIONS["target"]
+				}
+			filter({})
+			filter({"system:windows"})
+				postbuildcommands {
+					"{COPYFILE} $(TargetPath) " .. _OPTIONS["target"]
+				}
+			filter({})
+		end
+
 
 	project("popart")
-		kind("SharedLib")
+		kind("StaticLib")
 		language("C++")
 		cppdialect("C++17")
+		architecture(_OPTIONS["arch"])
 
 		includedirs({
 			"popart/src/networks",
@@ -110,10 +164,14 @@ workspace("Popart_Networks")
 			"popart/src/seqio/*.cpp",
 		})
 
-		location("build")
+		filter({"options:disableintnj"})
+			removefiles({"popart/src/networks/IntNJ.cpp"})
+		filter({})
 		filter({"not options:disableintnj"})
 			links({"lpsolve55"})
 		filter({})
+
+		location("build")
 		--pic("On")
 		linkoptions({})
 		warnings("Extra")
@@ -131,10 +189,6 @@ workspace("Popart_Networks")
 				"unused-but-set-variable",
 				"unused-result",
 			})
-		filter({"options:disableintnj"})
-			removefiles({"popart/src/networks/IntNJ.cpp"})
-			defines({"DISABLE_INTNJ"})
-		filter({})
 
 		filter({"configurations:debug"})
 			defines({"DEBUG"})
