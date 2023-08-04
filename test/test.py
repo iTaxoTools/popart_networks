@@ -25,5 +25,5 @@ seqs = [
 	["seq_10b", "ATATACGGGGTAATC", "Homo_altaiensis"      ],
 ]
 
-g = pn.calcGraph(seqs, 0)
+g = pn.calcGraph(seqs, 1, 0)
 print(g)

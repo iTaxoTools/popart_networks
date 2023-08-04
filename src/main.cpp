@@ -81,7 +81,9 @@ void fillSequences(std::vector<Sequence*>& seqs){
 int main(int argc, char* argv[]){
 	std::vector<Sequence*> seqs = testSequences1();
 
-	SeqGraph sg{seqs, MED_JOIN_NET};
+	SeqGraph sg{seqs, MINIMUM_SPANNING_TREE};
+	unsigned a = 10;
+	sg.p0 = &a;
 	sg.calc();
 	sg.print();
 

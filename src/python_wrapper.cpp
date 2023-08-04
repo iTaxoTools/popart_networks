@@ -126,6 +126,35 @@ PyObject* calcGraph(PyObject* self, PyObject* args){
 
 	long algo = PyLong_AsLong(pyAlgo);
 	SeqGraph g{seqs, (PopartNetworkAlgo)algo};
+	unsigned p0U;
+#ifndef DISABLE_INTNJ
+	double   p0D;
+	int      p1I;
+#endif
+	switch(algo){
+		case MINIMUM_SPANNING_TREE:
+		case MED_JOIN_NET:
+			if(PyTuple_Size(args) >= 3){
+				PyObject* pyP = PyTuple_GetItem(args, 2);
+				p0U = PyLong_AsLong(pyP);
+				g.p0 = &p0U;
+			}
+			break;
+#ifndef DISABLE_INTNJ
+		case INTEGER_NJ_NET:
+			if(PyTuple_Size(args) >= 3){
+				PyObject* pyP = PyTuple_GetItem(args, 2);
+				p0D = PyLong_AsDouble(pyP);
+				g.p0 = &p0D;
+			}
+			if(PyTuple_Size(args) >= 4){
+				PyObject* pyP = PyTuple_GetItem(args, 3);
+				p1I = PyLong_AsLong(pyP);
+				g.p1 = &p1I;
+			}
+			break;
+#endif
+	}
 	g.coloring = coloring;
 	g.calc();
 

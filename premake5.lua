@@ -13,6 +13,11 @@ workspace("Popart_Networks")
 		}
 	})
 	newoption({
+		trigger = "disableintnj",
+		category = "Custom",
+		description = "Disable Integer NJ Network from popart"
+	})
+	newoption({
 		trigger = "nopython",
 		category = "Custom",
 		description = "Disable Python bindings"
@@ -50,6 +55,8 @@ workspace("Popart_Networks")
 			removefiles({
 				"src/python_wrapper.cpp",
 			})
+		filter({"options:disableintnj"})
+			defines({"DISABLE_INTNJ"})
 		filter({})
 
 		location("build")
@@ -104,8 +111,9 @@ workspace("Popart_Networks")
 		})
 
 		location("build")
+		filter({"not options:disableintnj"})
+			links({"lpsolve55"})
 		filter({})
-		links({"lpsolve55"})
 		--pic("On")
 		linkoptions({})
 		warnings("Extra")
@@ -123,6 +131,10 @@ workspace("Popart_Networks")
 				"unused-but-set-variable",
 				"unused-result",
 			})
+		filter({"options:disableintnj"})
+			removefiles({"popart/src/networks/IntNJ.cpp"})
+			defines({"DISABLE_INTNJ"})
+		filter({})
 
 		filter({"configurations:debug"})
 			defines({"DEBUG"})

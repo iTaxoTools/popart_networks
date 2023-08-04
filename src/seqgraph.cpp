@@ -2,36 +2,19 @@
 
 #include "networks/MinSpanNet.h"
 #include "networks/MedJoinNet.h"
-#include "networks/IntNJ.h"
 #include "networks/TightSpanWalker.h"
 #include "networks/TCS.h"
+#ifndef DISABLE_INTNJ
+#include "networks/IntNJ.h"
+#endif
 
 #include <cassert>
 
-SeqGraph::SeqGraph(std::vector<Sequence*> const& s, PopartNetworkAlgo algo, bool moID){
-	seqs = s;
-	if(moID)
-		setColoringFromMoID();
-
-	switch(algo){
-		case MINIMUM_SPANNING_TREE:
-			g = new MinSpanNet(seqs, std::vector<bool>{});
-			break;
-		case MED_JOIN_NET:
-			g = new MedJoinNet(seqs, std::vector<bool>{});
-			break;
-		case INTEGER_NJ_NET:
-			g = new IntNJ(seqs, std::vector<bool>{});
-			break;
-		case TIGHT_SPAN_WALKER:
-			g = new TightSpanWalker(seqs, std::vector<bool>{});
-			break;
-		case TCS_NETWORK:
-			g = new TCS(seqs, std::vector<bool>{});
-			break;
-		default:
-			fprintf(stderr, "Error: Algorithm not recognized!\n");
-	}
+SeqGraph::SeqGraph(std::vector<Sequence*> const& s, PopartNetworkAlgo a, bool moID):
+	algo{a},
+	p0{nullptr},
+	p1{nullptr},
+	seqs{s}{
 }
 
 void SeqGraph::setColoringFromMoID(){
@@ -49,6 +32,40 @@ void SeqGraph::setColoringFromMoID(){
 	}
 }
 void SeqGraph::calc(){
+	switch(algo){
+		case MINIMUM_SPANNING_TREE:
+			if(p0)
+				g = new MinSpanNet(seqs, std::vector<bool>{}, *((unsigned*)p0));
+			else
+				g = new MinSpanNet(seqs, std::vector<bool>{});
+			break;
+		case MED_JOIN_NET:
+			if(p0)
+				g = new MedJoinNet(seqs, std::vector<bool>{}, *((unsigned*)p0));
+			else
+				g = new MedJoinNet(seqs, std::vector<bool>{});
+			break;
+#ifndef DISABLE_INTNJ
+		case INTEGER_NJ_NET:
+			if(p0)
+				if(p1)
+					g = new IntNJ(seqs, std::vector<bool>{}, *((double*)p0), *((int*)p1));
+				else
+					g = new IntNJ(seqs, std::vector<bool>{}, *((double*)p0));
+			else
+				g = new IntNJ(seqs, std::vector<bool>{});
+			break;
+#endif
+		case TIGHT_SPAN_WALKER:
+			g = new TightSpanWalker(seqs, std::vector<bool>{});
+			break;
+		case TCS_NETWORK:
+			g = new TCS(seqs, std::vector<bool>{});
+			break;
+		default:
+			fprintf(stderr, "Error: Algorithm not recognized!\n");
+	}
+
 	g->setupGraph();
 
 	for(size_t i = 0; i < g->vertexCount(); ++i){
