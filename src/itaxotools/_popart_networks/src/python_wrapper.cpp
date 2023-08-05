@@ -24,74 +24,67 @@ PyMODINIT_FUNC PyInit__popart_networks(){
 	return PyModule_Create(&pnModule);
 }
 
-inline char const* getStrFromList(PyObject* l, Py_ssize_t i){
-	PyObject* str = PyList_GetItem(l, i);
-	assert(PyUnicode_Check(str));
-	return PyUnicode_AsUTF8(str);
-}
 PyObject* calcGraphOutput(SeqGraph const& g){
-	PyObject* gl = PyList_New(2);
+	PyObject* gl = PyTuple_New(2);
 
 	PyObject* vl = PyList_New(g.vertices.size());
-	PyList_SetItem(gl, 0, vl);
+	PyTuple_SetItem(gl, 0, vl);
 
 	for(size_t i = 0; i < g.vertices.size(); ++i){
 		SeqVertex const& v = g.vertices[i];
 
-		PyObject* pyV = PyList_New(2);
+		PyObject* pyV = PyTuple_New(2);
 		PyList_SetItem(vl, i, pyV);
 
 		PyObject* pyVSeqs = PyList_New(v.seqs.size());
-		PyList_SetItem(pyV, 0, pyVSeqs);
+		PyTuple_SetItem(pyV, 0, pyVSeqs);
 
 		for(size_t j = 0; j < v.seqs.size(); ++j){
 			Sequence* s = v.seqs[j];
 			std::string c = g.coloring.at(s);
 
-			PyObject* pyVSeq = PyList_New(c.size() ? 3 : 2);
+			PyObject* pyVSeq = PyTuple_New(3);
 			PyList_SetItem(pyVSeqs, j, pyVSeq);
 
 			PyObject* pyVSeqName = PyUnicode_FromString(s->name().c_str());
 			PyObject* pyVSeqData = PyUnicode_FromString(s->seq().c_str());
-			PyList_SetItem(pyVSeq, 0, pyVSeqName);
-			PyList_SetItem(pyVSeq, 1, pyVSeqData);
-			if(c.size()){
-				PyObject* pyVSeqPop  = PyUnicode_FromString(c.c_str());
-				PyList_SetItem(pyVSeq, 2, pyVSeqPop);
-			}
+			PyObject* pyVSeqPop  = PyUnicode_FromString(c.c_str());
+			PyTuple_SetItem(pyVSeq, 0, pyVSeqName);
+			PyTuple_SetItem(pyVSeq, 1, pyVSeqData);
+			PyTuple_SetItem(pyVSeq, 2, pyVSeqPop);
 		}
 
 		PyObject* pyVPops = PyList_New(0);
-		PyList_SetItem(pyV, 1, pyVPops);
+		PyTuple_SetItem(pyV, 1, pyVPops);
 
 		for(std::pair<std::string, int> pop: v.pops){
 			if(!pop.first.size())
 				continue;
-			PyObject* pyVPop = PyList_New(2);
-			PyList_Append(pyVPops, pyVPop);
-
+			PyObject* pyVPop = PyTuple_New(2);
 			PyObject* pyVPopName  = PyUnicode_FromString(pop.first.c_str());
 			PyObject* pyVPopCount = PyLong_FromLong(pop.second);
-			PyList_SetItem(pyVPop, 0, pyVPopName);
-			PyList_SetItem(pyVPop, 1, pyVPopCount);
+			PyTuple_SetItem(pyVPop, 0, pyVPopName);
+			PyTuple_SetItem(pyVPop, 1, pyVPopCount);
+
+			PyList_Append(pyVPops, pyVPop);
 		}
 	}
 
 	PyObject* el = PyList_New(g.edges.size());
-	PyList_SetItem(gl, 1, el);
+	PyTuple_SetItem(gl, 1, el);
 
 	for(size_t i = 0; i < g.edges.size(); ++i){
 		SeqEdge const& e = g.edges[i];
 
-		PyObject* pyE = PyList_New(3);
+		PyObject* pyE = PyTuple_New(3);
 		PyList_SetItem(el, i, pyE);
 
 		PyObject* pyEV1 = PyLong_FromLong(e.v1);
 		PyObject* pyEV2 = PyLong_FromLong(e.v2);
 		PyObject* pyEW  = PyLong_FromLong(e.w);
-		PyList_SetItem(pyE, 0, pyEV1);
-		PyList_SetItem(pyE, 1, pyEV2);
-		PyList_SetItem(pyE, 2, pyEW);
+		PyTuple_SetItem(pyE, 0, pyEV1);
+		PyTuple_SetItem(pyE, 1, pyEV2);
+		PyTuple_SetItem(pyE, 2, pyEW);
 	}
 
 	return gl;
@@ -111,17 +104,22 @@ PyObject* calcGraph(PyObject* self, PyObject* args){
 	std::map<Sequence*, std::string> coloring;
 	for(Py_ssize_t i = 0; i < PyList_Size(pySeqs); ++i){
 		PyObject* pySeq = PyList_GetItem(pySeqs, i);
-		assert(PyList_Check(pySeq));
-		assert(PyList_Size(pySeq) >= 2);
 
-		std::string name = getStrFromList(pySeq, 0);
-		std::string data = getStrFromList(pySeq, 1);
+		const char *c_name, *c_data, *c_color;
+
+		if (!PyArg_ParseTuple(pySeq, "sss", &c_name, &c_data, &c_color)) {
+			return NULL;
+		}
+
+		std::string name = c_name;
+		std::string data = c_data;
+		std::string color = c_color;
 
 		Sequence* seq = new Sequence{name, data};
 		seqs.push_back(seq);
 
-		if(PyList_Size(pySeq) >= 3)
-			coloring[seq] = getStrFromList(pySeq, 2);
+		if (!color.empty())
+			coloring[seq] = color;
 	}
 
 	long algo = PyLong_AsLong(pyAlgo);
