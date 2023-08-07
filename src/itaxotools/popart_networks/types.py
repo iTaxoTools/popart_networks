@@ -26,6 +26,14 @@ class Vertex(NamedTuple):
     seqs: list[Sequence]
     colors: list[Coloration]
 
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, type(self)):
+            return False
+        return all((
+            set(self.seqs) == set(other.seqs),
+            set(self.colors) == set(other.colors)
+        ))
+
 
 class Edge(NamedTuple):
     u: int
