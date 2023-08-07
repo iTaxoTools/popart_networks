@@ -270,9 +270,7 @@ setup(
         where='src',
     ),
     python_requires='>=3.10.2, <4',
-    install_requires=[
-        'taxi2==2.1.1',
-    ],
+    install_requires=[],
     extras_require={
         'dev': [
             'pytest',
@@ -286,11 +284,7 @@ setup(
         'develop': develop,
         'build_popart_networks': BuildPopArtNetworks,
     },
-    entry_points={
-        'console_scripts': [
-            'popart_networks = itaxotools.popart_networks.__main__:run',
-        ],
-    },
+    entry_points={},
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python :: 3',
