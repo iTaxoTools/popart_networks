@@ -60,6 +60,7 @@ workspace("Popart_Networks")
 		description = "Disable Python bindings"
 	})
 
+
 	project("popart_networks")
 		filter("options:kind=exe")
 			kind("ConsoleApp")
@@ -96,7 +97,7 @@ workspace("Popart_Networks")
 			"src/itaxotools/_popart_networks/src/*.cpp",
 			--"popart/src/testgraphs.cpp"
 		})
-		filter({"not options:nopython", "system:windows"})
+		filter("options:nopython")
 			removefiles({
 				"src/itaxotools/_popart_networks/src/python_wrapper.cpp",
 			})
