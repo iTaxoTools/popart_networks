@@ -49,10 +49,10 @@ workspace("Popart_Networks")
 		}
 	})
 	newoption({
-		trigger = "pythonversion",
+		trigger = "pythonlib",
 		category = "Custom",
-		description = "Python version to link against for non-Windows systems",
-		default = "3.11"
+		description = "Python library to link against",
+		default = "python3.11"
 	})
 	newoption({
 		trigger = "nopython",
@@ -72,10 +72,20 @@ workspace("Popart_Networks")
 		language("C++")
 		cppdialect("C++17")
 		architecture(_OPTIONS["arch"])
+		warnings("Extra")
+		location("build")
+		linkoptions({})
 
 		includedirs({
 			"src/itaxotools/_popart_networks/include",
 			"src/popart/src",
+		})
+		files({
+			"src/itaxotools/_popart_networks/src/*.cpp",
+			--"popart/src/testgraphs.cpp"
+		})
+		links({
+			"popart"
 		})
 
 		if _OPTIONS["includedirs"] then
@@ -90,44 +100,30 @@ workspace("Popart_Networks")
 			end
 		end
 
-		filter({"system:not windows"})
-			includedirs("/usr/include/python" .. _OPTIONS["pythonversion"])
-		filter({})
-		files({
-			"src/itaxotools/_popart_networks/src/*.cpp",
-			--"popart/src/testgraphs.cpp"
-		})
-		filter("options:nopython")
-			removefiles({
-				"src/itaxotools/_popart_networks/src/python_wrapper.cpp",
-			})
+		if _OPTIONS["target"] then
+			filter({"not system:windows"})
+				postbuildcommands {
+					"{COPYFILE} %{cfg.buildtarget.relpath} " .. _OPTIONS["target"]
+				}
+			filter({"system:windows"})
+				postbuildcommands {
+					"{COPYFILE} $(TargetPath) " .. _OPTIONS["target"]
+				}
+			filter({})
+		end
+
 		filter({"options:disableintnj"})
 			defines({"DISABLE_INTNJ"})
 		filter({"not options:disableintnj"})
 			links({"lpsolve55"})
-		filter({})
 
-		location("build")
-		--targetdir("build/bin/${cfg.buildcfg}")
-		--targetname("popart_networks")
-		filter({})
-		links({
-			"popart"
-		})
-		if _OPTIONS["pythonpath"] then
-			includedirs({_OPTIONS["pythonpath"] .. "/include"})
-			filter({"system:windows"})
-				libdirs(_OPTIONS["pythonpath"] .. "/libs")
-			filter({})
-		end
-		filter({"not options:nopython", "system:windows"})
-			links("python3")
-		filter({"not options:nopython", "system:not windows"})
-			links("python" .. _OPTIONS["pythonVersion"])
-		filter({})
-		--pic("On")
-		linkoptions({})
-		warnings("Extra")
+		filter("not options:nopython")
+			links(_OPTIONS["pythonlib"])
+		filter("options:nopython")
+			removefiles({
+				"src/itaxotools/_popart_networks/src/python_wrapper.cpp",
+			})
+
 		filter({"not system:windows"})
 			buildoptions({"-pedantic"})
 			disablewarnings({
@@ -141,24 +137,10 @@ workspace("Popart_Networks")
 			defines({"DEBUG"})
 			optimize("Debug")
 			symbols("On")
-
 		filter({"configurations:release"})
 			defines({"NDEBUG"})
 			optimize("Full")
 			--symbols("Off")
-
-		if _OPTIONS["target"] then
-			filter({"not system:windows"})
-				postbuildcommands {
-					"{COPYFILE} %{cfg.buildtarget.relpath} " .. _OPTIONS["target"]
-				}
-			filter({})
-			filter({"system:windows"})
-				postbuildcommands {
-					"{COPYFILE} $(TargetPath) " .. _OPTIONS["target"]
-				}
-			filter({})
-		end
 
 
 	project("popart")
@@ -167,6 +149,9 @@ workspace("Popart_Networks")
 		language("C++")
 		cppdialect("C++11")
 		architecture(_OPTIONS["arch"])
+		warnings("Extra")
+		location("build")
+		linkoptions({})
 
 		includedirs({
 			"src/popart/src/networks",
@@ -181,18 +166,12 @@ workspace("Popart_Networks")
 
 		filter({"options:disableintnj"})
 			removefiles({"src/popart/src/networks/IntNJ.cpp"})
-		filter({})
 		filter({"not options:disableintnj"})
 			links({"lpsolve55"})
-		filter({})
 
 		filter({"not options:enablepbar"})
 			defines({"DISABLE_PROGRESSBAR"})
 
-		location("build")
-		--pic("On")
-		linkoptions({})
-		warnings("Extra")
 		filter({"not system:windows"})
 			--buildoptions({"-pedantic"})
 			disablewarnings({
@@ -212,7 +191,6 @@ workspace("Popart_Networks")
 			defines({"DEBUG"})
 			optimize("Debug")
 			symbols("On")
-
 		filter({"configurations:release"})
 			defines({"NDEBUG"})
 			optimize("Full")
