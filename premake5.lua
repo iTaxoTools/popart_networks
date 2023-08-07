@@ -28,6 +28,11 @@ workspace("Popart_Networks")
 		description = "Python version to link against for non-Windows systems",
 		default = "3.11"
 	})
+	newoption({
+		trigger = "pythonpath",
+		category = "Custom",
+		description = "Python path"
+	})
 
 	project("popart_networks")
 		filter("options:kind=exe")
@@ -66,6 +71,12 @@ workspace("Popart_Networks")
 		links({
 			"popart"
 		})
+		if _OPTIONS["pythonpath"] then
+			includedirs({_OPTIONS["pythonpath"] .. "/include"})
+			filter({"system:windows"})
+				libdirs(_OPTIONS["pythonpath"] .. "/libs")
+			filter({})
+		end
 		filter({"not options:nopython", "system:windows"})
 			links("python3")
 		filter({"not options:nopython", "system:not windows"})
@@ -95,9 +106,9 @@ workspace("Popart_Networks")
 
 
 	project("popart")
-		kind("SharedLib")
+		kind("StaticLib")
 		language("C++")
-		cppdialect("C++17")
+		--cppdialect("C++11")
 
 		includedirs({
 			"popart/src/networks",
