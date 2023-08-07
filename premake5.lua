@@ -18,6 +18,11 @@ workspace("Popart_Networks")
 		description = "Disable Integer NJ Network from popart"
 	})
 	newoption({
+		trigger = "enablepbar",
+		category = "Custom",
+		description = "Enable the progressbar of Popart"
+	})
+	newoption({
 		trigger = "includedirs",
 		category = "Custom",
 		description = "List of include directories separated by semicolons"
@@ -97,6 +102,8 @@ workspace("Popart_Networks")
 			})
 		filter({"options:disableintnj"})
 			defines({"DISABLE_INTNJ"})
+		filter({"not options:disableintnj"})
+			links({"lpsolve55"})
 		filter({})
 
 		location("build")
@@ -106,6 +113,12 @@ workspace("Popart_Networks")
 		links({
 			"popart"
 		})
+		if _OPTIONS["pythonpath"] then
+			includedirs({_OPTIONS["pythonpath"] .. "/include"})
+			filter({"system:windows"})
+				libdirs(_OPTIONS["pythonpath"] .. "/libs")
+			filter({})
+		end
 		filter({"not options:nopython", "system:windows"})
 			links("python3")
 		filter({"not options:nopython", "system:not windows"})
@@ -149,8 +162,9 @@ workspace("Popart_Networks")
 
 	project("popart")
 		kind("StaticLib")
+		kind("StaticLib")
 		language("C++")
-		cppdialect("C++17")
+		cppdialect("C++11")
 		architecture(_OPTIONS["arch"])
 
 		includedirs({
@@ -170,6 +184,9 @@ workspace("Popart_Networks")
 		filter({"not options:disableintnj"})
 			links({"lpsolve55"})
 		filter({})
+
+		filter({"not options:enablepbar"})
+			defines({"DISABLE_PROGRESSBAR"})
 
 		location("build")
 		--pic("On")
