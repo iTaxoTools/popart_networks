@@ -18,9 +18,9 @@ workspace("Popart_Networks")
 		description = "Disable Integer NJ Network from popart"
 	})
 	newoption({
-		trigger = "disablepbar",
+		trigger = "enablepbar",
 		category = "Custom",
-		description = "Disable the progressbar of Popart"
+		description = "Enable the progressbar of Popart"
 	})
 	newoption({
 		trigger = "nopython",
@@ -152,7 +152,7 @@ workspace("Popart_Networks")
 		filter({"options:disableintnj"})
 			removefiles({"popart/src/networks/IntNJ.cpp"})
 			defines({"DISABLE_INTNJ"})
-		filter({"options:disablepbar"})
+		filter({"not options:enablepbar"})
 			defines({"DISABLE_PROGRESSBAR"})
 		filter({})
 
