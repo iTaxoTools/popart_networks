@@ -62,6 +62,8 @@ workspace("Popart_Networks")
 			})
 		filter({"options:disableintnj"})
 			defines({"DISABLE_INTNJ"})
+		filter({"not options:disableintnj"})
+			links({"lpsolve55"})
 		filter({})
 
 		location("build")
