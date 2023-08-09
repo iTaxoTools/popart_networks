@@ -1,5 +1,6 @@
 from .._popart_networks import calcGraph
-from .types import Network, PopartNetworkAlgo, Sequence, Coloration, Edge, Vertex
+from .types import (
+    Coloration, Edge, Network, PopartNetworkAlgo, Sequence, Vertex)
 
 
 def _format_vertex(v: tuple[list[tuple], list[tuple]]) -> Vertex:

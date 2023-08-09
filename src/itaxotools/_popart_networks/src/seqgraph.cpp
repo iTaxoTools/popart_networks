@@ -95,7 +95,7 @@ void SeqGraph::calc(){
 				break;
 			}
 
-		se.w = e->weight();
+		se.w = ceil(e->weight());
 
 		edges.push_back(se);
 	}
