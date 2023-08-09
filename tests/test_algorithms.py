@@ -388,6 +388,43 @@ def network_tsw_simple() -> Network:
     )
 
 
+
+def sequences_tcs_simple() -> list[Sequence]:
+    return [
+        Sequence('id1', 'TA', ''),
+        Sequence('id2', 'GC', ''),
+        Sequence('id3', 'CT', ''),
+    ]
+
+
+def network_tcs_simple() -> Network:
+    return Network(
+        [
+            Vertex(
+                [Sequence('id1', 'TA', '')],
+                [],
+            ),
+            Vertex(
+                [Sequence('id2', 'GC', '')],
+                [],
+            ),
+            Vertex(
+                [Sequence('id3', 'CT', '')],
+                [],
+            ),
+            Vertex(
+                [],
+                [],
+            ),
+        ],
+        [
+            Edge(0, 3, 1),
+            Edge(1, 3, 1),
+            Edge(2, 3, 1),
+        ],
+    )
+
+
 def sequences_line_long(count: int, duplicates: int = 1) -> list[Sequence]:
     return [
         Sequence(f'id{x}', 'A' * x + 'C' * (count - x), f'sub{x}')
@@ -433,6 +470,8 @@ network_tests = [
     NetworkTest(sequences_mjt_simple, network_mjt_epsilon, build_mjt, dict(epsilon=1)),
 
     NetworkTest(sequences_tsw_simple, network_tsw_simple, build_tsw, {}),
+
+    NetworkTest(sequences_tcs_simple, network_tcs_simple, build_tcs, {}),
 
     NetworkTest(lambda: sequences_line_long(500), lambda: network_line_long(500), build_mst, {}),
     NetworkTest(lambda: sequences_line_long(1, 500), lambda: network_line_long(1, 500), build_mst, {}),
