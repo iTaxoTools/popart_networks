@@ -1,4 +1,5 @@
 from .._popart_networks import calcGraph
+from .preparse import preparse
 from .types import (
     Coloration, Edge, Network, PopartNetworkAlgo, Sequence, Vertex)
 
@@ -17,6 +18,7 @@ def _format_output(g: tuple[list[tuple], list[tuple]]) -> Network:
     )
 
 
+@preparse
 def build_mst(input: list[Sequence], epsilon: int = 0) -> Network:
     """Build minimum spanning tree network"""
     algo = PopartNetworkAlgo.MINIMUM_SPANNING_TREE
@@ -24,6 +26,7 @@ def build_mst(input: list[Sequence], epsilon: int = 0) -> Network:
     return _format_output(g)
 
 
+@preparse
 def build_mjt(input: list[Sequence], epsilon: int = 0) -> Network:
     """Build median joining network"""
     algo = PopartNetworkAlgo.MED_JOIN_NET
@@ -31,6 +34,7 @@ def build_mjt(input: list[Sequence], epsilon: int = 0) -> Network:
     return _format_output(g)
 
 
+@preparse
 def build_tsw(input: list[Sequence]) -> Network:
     """Build tight span walker network"""
     algo = PopartNetworkAlgo.TIGHT_SPAN_WALKER
@@ -38,6 +42,7 @@ def build_tsw(input: list[Sequence]) -> Network:
     return _format_output(g)
 
 
+@preparse
 def build_tcs(input: list[Sequence]) -> Network:
     """Build TCS network"""
     algo = PopartNetworkAlgo.TCS_NETWORK

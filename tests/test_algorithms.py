@@ -99,6 +99,18 @@ def sequences_simple_shuffled() -> list[Sequence]:
     ]
 
 
+def sequences_simple_iter() -> iter[Sequence]:
+    yield Sequence('id2', 'T', 'Y')
+    yield Sequence('id1', 'A', 'X')
+
+
+def sequences_simple_tuples() -> list[tuple[str, str, str]]:
+    return [
+        ('id2', 'T', 'Y'),
+        ('id1', 'A', 'X'),
+    ]
+
+
 def network_simple() -> Network:
     return Network(
         [
@@ -144,8 +156,8 @@ def network_colorless() -> Network:
 
 def sequences_gaps() -> list[Sequence]:
     return [
-        Sequence('id1', 'AAAA', ''),
-        Sequence('id2', '----', ''),
+        Sequence('id1', 'A', ''),
+        Sequence('id2', '-', ''),
     ]
 
 
@@ -153,14 +165,42 @@ def network_gaps() -> Network:
     return Network(
         [
             Vertex(
-                [
-                    Sequence('id1', 'AAAA', ''),
-                    Sequence('id2', 'T', ''),
-                ],
+                [Sequence('id1', 'A', '')],
+                [],
+            ),
+            Vertex(
+                [Sequence('id2', '-', '')],
                 [],
             ),
         ],
-        [],
+        [
+            Edge(0, 1, 1),
+        ],
+    )
+
+
+def sequences_ambiguous() -> list[Sequence]:
+    return [
+        Sequence('id1', 'ACTG', ''),
+        Sequence('id2', 'A-NY', ''),
+    ]
+
+
+def network_ambiguous() -> Network:
+    return Network(
+        [
+            Vertex(
+                [Sequence('id1', 'AC', '')],
+                [],
+            ),
+            Vertex(
+                [Sequence('id2', 'A-', '')],
+                [],
+            ),
+        ],
+        [
+            Edge(0, 1, 1),
+        ],
     )
 
 
@@ -388,7 +428,6 @@ def network_tsw_simple() -> Network:
     )
 
 
-
 def sequences_tcs_simple() -> list[Sequence]:
     return [
         Sequence('id1', 'TA', ''),
@@ -450,10 +489,13 @@ def network_line_long(count: int, duplicates: int = 1) -> Network:
 networks_tests_universal = [
     UniversalNetworkTest(sequences_simple, network_simple),
     UniversalNetworkTest(sequences_simple_shuffled, network_simple),
+    UniversalNetworkTest(sequences_simple_iter, network_simple),
+    UniversalNetworkTest(sequences_simple_tuples, network_simple),
     UniversalNetworkTest(sequences_colorless, network_colorless),
     UniversalNetworkTest(sequences_two_mutations, network_two_mutations),
     UniversalNetworkTest(sequences_cluster, network_cluster),
-    # UniversalNetworkTest(sequences_gaps, network_gaps),
+    UniversalNetworkTest(sequences_gaps, network_gaps),
+    UniversalNetworkTest(sequences_ambiguous, network_ambiguous),
 
     UniversalNetworkTest(lambda: sequences_line_long(10, 1), lambda: network_line_long(10, 1)),
     UniversalNetworkTest(lambda: sequences_line_long(1, 10), lambda: network_line_long(1, 10)),
@@ -507,7 +549,7 @@ def sequences_bad_length() -> list[Sequence]:
 networks_tests_bad_universal = [
     BadUniversalNetworkTest(sequences_bad_seq, network_simple, AssertionError),
     BadUniversalNetworkTest(sequences_bad_color, network_simple, AssertionError),
-    # BadUniversalNetworkTest(sequences_bad_length, None, ValueError),
+    BadUniversalNetworkTest(sequences_bad_length, None, ValueError),
 ]
 
 
