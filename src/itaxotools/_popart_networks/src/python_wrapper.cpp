@@ -154,7 +154,20 @@ PyObject* calcGraph(PyObject* self, PyObject* args){
 #endif
 	}
 	g.coloring = coloring;
-	g.calc();
+
+
+    try {
+		g.calc();
+    }
+    catch (const UnequalSequencesError& e) {
+        PyErr_SetString(PyExc_ValueError, e.what());
+		return NULL;
+    }
+    catch (const std::runtime_error& e) {
+        PyErr_SetString(PyExc_RuntimeError, e.what());
+		return NULL;
+    }
+
 
 	PyObject* graphList = calcGraphOutput(g);
 
