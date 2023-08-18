@@ -25,8 +25,8 @@ seqs = [
     pn.Sequence("seq_10b", "ATATACGGGGTAATC", "Homo_altaiensis"      ),
 ]
 
-g = pn.build_mst(seqs)
-# g = pn.build_mjt(seqs)
+g = pn.build_msn(seqs)
+# g = pn.build_mjn(seqs)
 # g = pn.build_tsw(seqs)
 # g = pn.build_tcs(seqs)
 

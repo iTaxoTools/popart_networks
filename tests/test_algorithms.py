@@ -8,7 +8,7 @@ import networkx as nx
 import pytest
 
 from itaxotools.popart_networks import (
-    build_mjt, build_mst, build_tcs, build_tsw)
+    build_mjn, build_msn, build_tcs, build_tsw)
 from itaxotools.popart_networks.types import (
     Coloration, Edge, Network, Sequence, Vertex)
 
@@ -65,7 +65,7 @@ class UniversalNetworkTest:
     def get_all_tests(self):
         return (
             NetworkTest(self.sequences_fixture, self.network_fixture, algo, {})
-            for algo in [build_mjt, build_mst, build_tcs, build_tsw]
+            for algo in [build_mjn, build_msn, build_tcs, build_tsw]
         )
 
 
@@ -81,7 +81,7 @@ class BadUniversalNetworkTest(UniversalNetworkTest):
     def get_all_bad_tests(self):
         return (
             BadNetworkTest(self.sequences_fixture, self.network_fixture, algo, {}, self.exception)
-            for algo in [build_mjt, build_mst, build_tcs, build_tsw]
+            for algo in [build_mjn, build_msn, build_tcs, build_tsw]
         )
 
 
@@ -505,18 +505,18 @@ networks_tests_universal = [
 network_tests = [
     *chain(*(test.get_all_tests() for test in networks_tests_universal)),
 
-    NetworkTest(sequences_mst_simple, network_mst_simple, build_mst, {}),
-    NetworkTest(sequences_mst_simple, network_mst_epsilon, build_mst, dict(epsilon=1)),
+    NetworkTest(sequences_mst_simple, network_mst_simple, build_msn, {}),
+    NetworkTest(sequences_mst_simple, network_mst_epsilon, build_msn, dict(epsilon=1)),
 
-    NetworkTest(sequences_mjt_simple, network_mjt_simple, build_mjt, {}),
-    NetworkTest(sequences_mjt_simple, network_mjt_epsilon, build_mjt, dict(epsilon=1)),
+    NetworkTest(sequences_mjt_simple, network_mjt_simple, build_mjn, {}),
+    NetworkTest(sequences_mjt_simple, network_mjt_epsilon, build_mjn, dict(epsilon=1)),
 
     NetworkTest(sequences_tsw_simple, network_tsw_simple, build_tsw, {}),
 
     NetworkTest(sequences_tcs_simple, network_tcs_simple, build_tcs, {}),
 
-    NetworkTest(lambda: sequences_line_long(500), lambda: network_line_long(500), build_mst, {}),
-    NetworkTest(lambda: sequences_line_long(1, 500), lambda: network_line_long(1, 500), build_mst, {}),
+    NetworkTest(lambda: sequences_line_long(500), lambda: network_line_long(500), build_msn, {}),
+    NetworkTest(lambda: sequences_line_long(1, 500), lambda: network_line_long(1, 500), build_msn, {}),
 ]
 
 

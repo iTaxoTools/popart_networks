@@ -19,7 +19,7 @@ def _format_output(g: tuple[list[tuple], list[tuple]]) -> Network:
 
 
 @preparse
-def build_mst(input: list[Sequence], epsilon: int = 0) -> Network:
+def build_msn(input: list[Sequence], epsilon: int = 0) -> Network:
     """Build minimum spanning tree network"""
     algo = PopartNetworkAlgo.MINIMUM_SPANNING_TREE
     g = calcGraph(input, algo, epsilon)
@@ -27,7 +27,7 @@ def build_mst(input: list[Sequence], epsilon: int = 0) -> Network:
 
 
 @preparse
-def build_mjt(input: list[Sequence], epsilon: int = 0) -> Network:
+def build_mjn(input: list[Sequence], epsilon: int = 0) -> Network:
     """Build median joining network"""
     algo = PopartNetworkAlgo.MED_JOIN_NET
     g = calcGraph(input, algo, epsilon)

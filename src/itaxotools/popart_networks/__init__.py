@@ -1,2 +1,2 @@
 from .types import Coloration, Edge, Network, Sequence, Vertex
-from .wrapper import build_mjt, build_mst, build_tcs, build_tsw
+from .wrapper import build_mjn, build_msn, build_tcs, build_tsw
