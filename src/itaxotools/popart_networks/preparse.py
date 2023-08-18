@@ -20,7 +20,7 @@ def prune_positions(sequences: list[Sequence], kept: str):
         return sequences
 
     positions_kept = [
-        position for position in range(len(sequences[0]))
+        position for position in range(len(sequences[0].seq))
         if position not in positions_pruned]
 
     pruned_sequences = []
