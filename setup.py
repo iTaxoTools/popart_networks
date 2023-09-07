@@ -263,7 +263,7 @@ class develop(_develop):
 
 setup(
     name='popart_networks',
-    version='0.0.1',
+    version='0.1.0',
     description='Python bindings for PopArt network algorithms',
     long_description=long_description,
     long_description_content_type='text/markdown',
