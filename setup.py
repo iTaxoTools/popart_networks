@@ -12,10 +12,6 @@ from setuptools import Command, find_namespace_packages, msvc, setup
 from setuptools.command.build import build as _build
 from setuptools.command.develop import develop as _develop
 
-# Get the long description from the README file
-here = Path(__file__).parent.resolve()
-long_description = (here / 'README.md').read_text(encoding='utf-8')
-
 
 class BuildPopArtNetworks(Command):
     """Custom command for building popart_networks"""
@@ -262,38 +258,22 @@ class develop(_develop):
 
 
 setup(
-    name='popart_networks',
-    version='0.1.0',
-    description='Python bindings for PopArt network algorithms',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
+
     package_dir={'': 'src'},
+    include_package_data=True,
     packages=find_namespace_packages(
         include=('itaxotools*',),
         where='src',
     ),
-    python_requires='>=3.10.2, <4',
-    install_requires=[],
-    extras_require={
-        'dev': [
-            'pytest',
-            'networkx',  # used for testing graph equality
-            'autoflake',
-            'flake8',
-            'isort',
-        ],
-    },
     cmdclass={
         'build': build,
         'develop': develop,
         'build_popart_networks': BuildPopArtNetworks,
     },
-    entry_points={},
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3 :: Only',
     ],
-    include_package_data=True,
 )

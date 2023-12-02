@@ -1,10 +1,66 @@
 [build-system]
-requires = ["setuptools==63.0.0", "wheel"]
+requires = ["setuptools==63.0.0", "wheel", "setuptools-git-versioning"]
 build-backend = "setuptools.build_meta"
 
-[tool.autoflake]
-remove-all-unused-imports = true
+[project]
+name = "itaxotools-popart-networks"
+dynamic = ["version"]
+description = "Python bindings for PopArt network algorithms"
+readme = "README.md"
+requires-python = ">=3.10.2, <4"
+keywords = []
+authors = [
+    { name = "Stefanos Patmanidis", email = "stefanpatman91@gmail.com" },
+    { name = "Jan-Christopher Schmidt" },
+]
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "setuptools-git-versioning",
+    "cibuildwheel",
+    "pre-commit",
+    "ruff",
+    "pytest",
+    "networkx",
+]
+
+[project.urls]
+Homepage = "https://itaxotools.org/"
+Source = "https://github.com/iTaxoTools/popart_networks"
+
+[tool.setuptools-git-versioning]
+dirty_template = "{tag}"
+dev_template = "{tag}"
+enabled = true
+
+[tool.ruff]
 ignore-init-module-imports = true
-remove-unused-variables = true
-recursive = true
-in-place = true
+extend-select = ["I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["itaxotools"]
+section-order = [
+    "future",
+    "pyqt",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+pyqt = ["PySide6"]
+
+[tool.cibuildwheel]
+test-requires = "pytest networkx"
+test-command = "pytest {project}/tests"
