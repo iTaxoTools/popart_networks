@@ -4,6 +4,7 @@ from typing import NamedTuple
 
 class PopartNetworkAlgo(IntEnum):
     """Mirrors seqgraph.hpp"""
+
     MINIMUM_SPANNING_TREE = 0
     MED_JOIN_NET = 1
     TIGHT_SPAN_WALKER = 2
@@ -29,10 +30,9 @@ class Vertex(NamedTuple):
     def __eq__(self, other) -> bool:
         if not isinstance(other, type(self)):
             return False
-        return all((
-            set(self.seqs) == set(other.seqs),
-            set(self.colors) == set(other.colors)
-        ))
+        return all(
+            (set(self.seqs) == set(other.seqs), set(self.colors) == set(other.colors))
+        )
 
 
 class Edge(NamedTuple):

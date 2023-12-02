@@ -15,24 +15,25 @@ from setuptools.command.develop import develop as _develop
 
 class BuildPopArtNetworks(Command):
     """Custom command for building popart_networks"""
-    description = 'compile popart_networks using premake'
+
+    description = "compile popart_networks using premake"
     user_options = [
-        ('build-lib=', 'b', 'directory for compiled extension modules'),
+        ("build-lib=", "b", "directory for compiled extension modules"),
         (
-            'inplace',
-            'i',
-            'ignore build-lib and put compiled extensions into the source '
-            + 'directory alongside your pure Python modules',
+            "inplace",
+            "i",
+            "ignore build-lib and put compiled extensions into the source "
+            + "directory alongside your pure Python modules",
         ),
         (
-            'make',
-            'm',
-            'call premake without building',
+            "make",
+            "m",
+            "call premake without building",
         ),
     ]
 
     def initialize_options(self):
-        self.name = 'itaxotools._popart_networks'
+        self.name = "itaxotools._popart_networks"
 
         self.hxcpp_includes = []
         self.python_includes = []
@@ -50,20 +51,20 @@ class BuildPopArtNetworks(Command):
 
     def finalize_options(self):
         self.set_undefined_options(
-            'build',
-            ('build_lib', 'build_lib'),
-            ('plat_name', 'plat_name'),
-            ('debug', 'debug'),
+            "build",
+            ("build_lib", "build_lib"),
+            ("plat_name", "plat_name"),
+            ("debug", "debug"),
         )
 
-        if self.plat_name.startswith('win-'):
+        if self.plat_name.startswith("win-"):
             self.windows = True
-        elif self.plat_name.startswith('macosx-'):
+        elif self.plat_name.startswith("macosx-"):
             self.macosx = True
 
         self.arch = platform.machine()
-        if self.arch.upper() == 'AMD64':
-            self.arch = 'x86_64'
+        if self.arch.upper() == "AMD64":
+            self.arch = "x86_64"
 
         self.find_python_includes()
         self.find_python_libdirs()
@@ -78,25 +79,25 @@ class BuildPopArtNetworks(Command):
 
     def subprocess(self, func, arg, error, missing=None):
         if isinstance(arg, list):
-            command = ' '.join(arg)
+            command = " ".join(arg)
             tool = arg[0]
             shell = False
         elif isinstance(arg, str):
             command = arg
-            tool = arg.split(' ')[0]
+            tool = arg.split(" ")[0]
             shell = True
         else:
-            raise Exception('Bad subprocess arguments')
+            raise Exception("Bad subprocess arguments")
 
         try:
             print(command)
             result = func(arg, shell=shell)
             if func is check_output:
-                result = result.decode('utf-8')
+                result = result.decode("utf-8")
                 print(result)
             return result
         except OSError as e:
-            missing = missing or f'Couldn\'t find {tool}, is {tool} installed?'
+            missing = missing or f"Couldn't find {tool}, is {tool} installed?"
             raise Exception(missing) from e
         except CalledProcessError as e:
             raise Exception(error) from e
@@ -104,30 +105,28 @@ class BuildPopArtNetworks(Command):
     def set_environ(self):
         plat_name = self.plat_name
         if self.windows:
-            print('Loading MSVC environment...')
-            plat_name = self.plat_name[len('win-'):]
+            print("Loading MSVC environment...")
+            plat_name = self.plat_name[len("win-") :]
             env = msvc.msvc14_get_vc_env(plat_name)
             os.environ.update(env)
 
     def is_git_repository(self) -> bool:
         try:
-            self.subprocess(
-                check_call, ['git', 'status'],
-                'Couldn\'t check git status'
-            )
+            self.subprocess(check_call, ["git", "status"], "Couldn't check git status")
         except Exception:
             return False
         return True
 
     def git_submodules_initialized(self):
         output = self.subprocess(
-            check_output, ['git', 'submodule', 'status'],
-            'Couldn\'t check git submodule status'
+            check_output,
+            ["git", "submodule", "status"],
+            "Couldn't check git submodule status",
         )
 
-        submodules = output.split('\n')
+        submodules = output.split("\n")
         for submodule in submodules:
-            if submodule.strip().startswith('-'):
+            if submodule.strip().startswith("-"):
                 return False
         return True
 
@@ -136,8 +135,9 @@ class BuildPopArtNetworks(Command):
             return
         if not self.git_submodules_initialized():
             self.subprocess(
-                check_call, ['git', 'submodule', 'update', '--init', '--recursive'],
-                'Couldn\'t initialize git submodules'
+                check_call,
+                ["git", "submodule", "update", "--init", "--recursive"],
+                "Couldn't initialize git submodules",
             )
 
     def find_python_includes(self):
@@ -145,7 +145,7 @@ class BuildPopArtNetworks(Command):
         self.python_includes.append(Path(includes))
 
         if sys.exec_prefix != sys.base_exec_prefix:
-            includes = Path(sys.exec_prefix) / 'include'
+            includes = Path(sys.exec_prefix) / "include"
             self.python_includes.append(Path(includes))
 
         plat_includes = sysconfig.get_python_inc(plat_specific=1)
@@ -154,30 +154,30 @@ class BuildPopArtNetworks(Command):
 
     def find_python_libdirs(self):
         if self.windows:
-            libdir = Path(sys.base_exec_prefix) / 'libs'
+            libdir = Path(sys.base_exec_prefix) / "libs"
             self.python_libdirs.append(libdir)
         else:
-            libdir = Path(sys.base_exec_prefix) / 'lib'
+            libdir = Path(sys.base_exec_prefix) / "lib"
             self.python_libdirs.append(libdir)
 
     def get_python_library(self):
         if self.windows:
-            template = 'python{}{}'
+            template = "python{}{}"
         else:
-            template = 'python{}.{}'
+            template = "python{}.{}"
         if self.debug:
-            template = template + '_d'
+            template = template + "_d"
         return template.format(
             sys.hexversion >> 24,
             (sys.hexversion >> 16) & 0xFF,
         )
 
     def get_target_filename(self, name):
-        suffix = sysconfig.get_config_var('EXT_SUFFIX')
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
         return name + suffix
 
     def get_target_path(self):
-        parts = self.name.split('.')
+        parts = self.name.split(".")
         filename = self.get_target_filename(parts[-1])
 
         if not self.inplace:
@@ -185,8 +185,8 @@ class BuildPopArtNetworks(Command):
             module_path = Path().joinpath(*parts[:-1])
             package_path = build_path / module_path
         else:
-            package = '.'.join(parts[:-1])
-            build_py = self.get_finalized_command('build_py')
+            package = ".".join(parts[:-1])
+            build_py = self.get_finalized_command("build_py")
             package_dir = build_py.get_package_dir(package)
             package_path = Path(package_dir)
 
@@ -195,97 +195,100 @@ class BuildPopArtNetworks(Command):
 
     def premake(self):
         if self.windows:
-            version = os.environ.get('VisualStudioVersion', None)
-            if version == '16.0':
-                action = 'vs2019'
-            elif version == '17.0':
-                action = 'vs2022'
+            version = os.environ.get("VisualStudioVersion", None)
+            if version == "16.0":
+                action = "vs2019"
+            elif version == "17.0":
+                action = "vs2022"
             else:
-                raise Exception('Cannot determine Visual Studio version')
+                raise Exception("Cannot determine Visual Studio version")
         else:
-            action = 'gmake2'
+            action = "gmake2"
 
         # Command in string form since using lists with check_call
         # breaks premake's argument parsing
-        command = f'premake5 {action}'
+        command = f"premake5 {action}"
 
         includes = self.python_includes
         if includes:
             includes = [str(path) for path in includes]
-            includes = ';'.join(includes)
-            command += f' --includedirs=\"{includes}\"'
+            includes = ";".join(includes)
+            command += f' --includedirs="{includes}"'
 
         libdirs = self.python_libdirs
         if libdirs:
             libdirs = [str(path) for path in libdirs]
-            libdirs = ';'.join(libdirs)
-            command += f' --libdirs=\"{libdirs}\"'
+            libdirs = ";".join(libdirs)
+            command += f' --libdirs="{libdirs}"'
 
         target = self.get_target_path()
-        command += f' --target=\"{target}\"'
+        command += f' --target="{target}"'
 
-        command += f' --arch={self.arch}'
+        command += f" --arch={self.arch}"
 
         lib = self.get_python_library()
-        command += f' --pythonlib={lib}'
+        command += f" --pythonlib={lib}"
 
-        command += ' --disableintnj'
+        command += " --disableintnj"
 
         self.subprocess(
-            check_call, command,
-            f'premake failed for action: {action}',
+            check_call,
+            command,
+            f"premake failed for action: {action}",
         )
 
     def build(self):
         if self.windows:
-            tool = 'msbuild'
-            command = f'{tool} /p:Configuration=Release'
+            tool = "msbuild"
+            command = f"{tool} /p:Configuration=Release"
         else:
-            tool = 'make'
+            tool = "make"
             # Always make, since postbuildcommands are not executed otherwise
             # and makefile phonies are not supported by premake
-            command = f'{tool} config=release --always-make'
+            command = f"{tool} config=release --always-make"
 
         self.subprocess(
-            check_call, command,
-            f'Building with {tool} failed!',
-            f'Couldn\'t find build tool: {tool}'
+            check_call,
+            command,
+            f"Building with {tool} failed!",
+            f"Couldn't find build tool: {tool}",
         )
 
 
 class build(_build):
     """Overrides setuptools to build convphase by default"""
+
     def run(self):
-        self.reinitialize_command('build_popart_networks', inplace=0)
-        self.run_command('build_popart_networks')
+        self.reinitialize_command("build_popart_networks", inplace=0)
+        self.run_command("build_popart_networks")
         super().run()
 
 
 class develop(_develop):
     """Overrides setuptools to build convphase by default"""
+
     def run(self):
-        self.reinitialize_command('build_popart_networks', inplace=1)
-        self.run_command('build_popart_networks')
+        self.reinitialize_command("build_popart_networks", inplace=1)
+        self.run_command("build_popart_networks")
         super().run()
 
 
 setup(
-
-    package_dir={'': 'src'},
+    package_dir={"": "src"},
     include_package_data=True,
     packages=find_namespace_packages(
-        include=('itaxotools*',),
-        where='src',
+        include=("itaxotools*",),
+        where="src",
     ),
     cmdclass={
-        'build': build,
-        'develop': develop,
-        'build_popart_networks': BuildPopArtNetworks,
+        "build": build,
+        "develop": develop,
+        "build_popart_networks": BuildPopArtNetworks,
     },
     classifiers=[
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3 :: Only',
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3 :: Only",
     ],
 )
