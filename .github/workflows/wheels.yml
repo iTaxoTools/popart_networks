@@ -13,6 +13,7 @@ jobs:
         os: [ubuntu-20.04]
 
     env:
+      CIBW_ENVIRONMENT_LINUX: PATH=$PATH:/tmp/premake
       CIBW_BEFORE_ALL_LINUX: source scripts/install_premake.sh
       CIBW_SKIP: "cp312-* pp* *-manylinux_i686 *-musllinux_i686 *-win32"
       CIBW_ARCHS_MACOS: x86_64
@@ -23,11 +24,6 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-
-      - name: Install premake5
-        uses: abel0b/setup-premake@v2.3
-        with:
-          version: "5.0.0-beta2"
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.16.2
@@ -42,6 +38,7 @@ jobs:
   build-sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
+    if: false
     steps:
       - uses: actions/checkout@v4
         with:
