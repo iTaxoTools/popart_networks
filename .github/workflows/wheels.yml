@@ -9,10 +9,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-2019, macos-11]
+        # os: [ubuntu-20.04, windows-2019, macos-11]
+        os: [ubuntu-20.04]
 
     env:
-      CIBW_BEFORE_ALL_LINUX: "yum install -y premake"
+      CIBW_BEFORE_ALL_LINUX: source scripts/install_premake.sh
       CIBW_SKIP: "cp312-* pp* *-manylinux_i686 *-musllinux_i686 *-win32"
       CIBW_ARCHS_MACOS: x86_64
 
