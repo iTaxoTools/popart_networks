@@ -24,7 +24,7 @@ enum PopartNetworkAlgo{
 class SeqGraph{
 public:
 	SeqGraph(std::vector<Sequence*> const& s, PopartNetworkAlgo a, bool moID = false);
-	
+
 	void setColoringFromMoID();
 	void calc();
 	void print() const;

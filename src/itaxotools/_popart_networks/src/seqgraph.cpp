@@ -9,6 +9,7 @@
 #endif
 
 #include <cassert>
+#include <cmath>
 
 SeqGraph::SeqGraph(std::vector<Sequence*> const& s, PopartNetworkAlgo a, bool moID):
 	algo{a},
@@ -130,4 +131,3 @@ void SeqGraph::print() const{
 	for(std::pair<Sequence*, std::string> c: coloring)
 		printf("%-15s %s\n", c.first->name().c_str(), c.second.c_str());
 }
-

@@ -8,4 +8,3 @@ PyMODINIT_FUNC PyInit_popart_networks();
 static PyObject* calcGraph(PyObject* self, PyObject* args);
 
 #endif
-

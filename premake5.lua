@@ -125,6 +125,7 @@ workspace("Popart_Networks")
 			})
 
 		filter({"not system:windows"})
+		    pic "On"
 			buildoptions({"-pedantic"})
 			disablewarnings({
 				"unused-parameter",
@@ -174,6 +175,7 @@ workspace("Popart_Networks")
 
 		filter({"not system:windows"})
 			--buildoptions({"-pedantic"})
+		    pic "On"
 			disablewarnings({
 				"unused-parameter",
 				"sign-compare",
