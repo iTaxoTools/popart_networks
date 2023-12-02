@@ -15,6 +15,7 @@ jobs:
     env:
       CIBW_ENVIRONMENT_LINUX: PATH=$PATH:/tmp/premake
       CIBW_BEFORE_ALL_LINUX: source scripts/install_premake.sh
+      CIBW_BEFORE_BUILD_LINUX: echo $PATH
       CIBW_SKIP: "cp312-* pp* *-manylinux_i686 *-musllinux_i686 *-win32"
       CIBW_ARCHS_MACOS: x86_64
 
