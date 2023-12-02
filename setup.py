@@ -109,6 +109,16 @@ class BuildPopArtNetworks(Command):
             env = msvc.msvc14_get_vc_env(plat_name)
             os.environ.update(env)
 
+    def is_git_repository(self) -> bool:
+        try:
+            self.subprocess(
+                check_call, ['git', 'status'],
+                'Couldn\'t check git status'
+            )
+        except Exception:
+            return False
+        return True
+
     def git_submodules_initialized(self):
         output = self.subprocess(
             check_output, ['git', 'submodule', 'status'],
@@ -122,6 +132,8 @@ class BuildPopArtNetworks(Command):
         return True
 
     def update_git_submodules(self):
+        if not self.is_git_repository():
+            return
         if not self.git_submodules_initialized():
             self.subprocess(
                 check_call, ['git', 'submodule', 'update', '--init', '--recursive'],
