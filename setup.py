@@ -8,7 +8,7 @@ from distutils import sysconfig
 from pathlib import Path
 from subprocess import CalledProcessError, check_call, check_output
 
-from setuptools import Command, find_namespace_packages, msvc, setup
+from setuptools import Command, Extension, find_namespace_packages, msvc, setup
 from setuptools.command.build import build as _build
 from setuptools.command.develop import develop as _develop
 
@@ -285,10 +285,10 @@ setup(
         "develop": develop,
         "build_popart_networks": BuildPopArtNetworks,
     },
-    classifiers=[
-        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3 :: Only",
+    ext_modules=[
+        Extension(
+            name="itaxotools._popart_networks_dummy",
+            sources=["src/itaxotools/_popart_networks/src/dummy.cpp"],
+        ),
     ],
 )
