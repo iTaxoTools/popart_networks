@@ -37,6 +37,6 @@ python_add_library(_popart_networks MODULE ${PYMODULE_SOURCES} WITH_SOABI)
 target_include_directories(_popart_networks PRIVATE ${PYMODULE_INCLUDE_DIRS})
 target_link_libraries(_popart_networks PRIVATE popart)
 target_compile_definitions(_popart_networks PRIVATE -DDISABLE_INTNJ)
-set_property(TARGET popart PROPERTY CXX_STANDARD 17)
+set_property(TARGET _popart_networks PROPERTY CXX_STANDARD 17)
 
 install(TARGETS _popart_networks DESTINATION itaxotools)
