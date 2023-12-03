@@ -1,5 +1,5 @@
 #include "seqgraph.hpp"
-#include "networks/MedJoinNet.h"
+#include "MedJoinNet.h"
 
 #include <cstdio>
 #include <cassert>

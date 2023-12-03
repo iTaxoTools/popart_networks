@@ -2,9 +2,8 @@
 include README.md
 include LICENSE.txt
 include pyproject.toml
-include setup.py
 
 # Include extension module
-include premake5.lua
+include CMakeLists.txt
 recursive-include src/itaxotools/_popart_networks *
 recursive-include src/popart *

@@ -1,11 +1,11 @@
 #include "seqgraph.hpp"
 
-#include "networks/MinSpanNet.h"
-#include "networks/MedJoinNet.h"
-#include "networks/TightSpanWalker.h"
-#include "networks/TCS.h"
+#include "MinSpanNet.h"
+#include "MedJoinNet.h"
+#include "TightSpanWalker.h"
+#include "TCS.h"
 #ifndef DISABLE_INTNJ
-#include "networks/IntNJ.h"
+#include "IntNJ.h"
 #endif
 
 #include <cassert>

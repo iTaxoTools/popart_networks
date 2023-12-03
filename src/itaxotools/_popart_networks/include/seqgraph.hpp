@@ -4,7 +4,7 @@
 #include "seqvertex.hpp"
 #include "seqedge.hpp"
 
-#include "networks/HapNet.h"
+#include "HapNet.h"
 
 #include <vector>
 #include <string>

@@ -3,7 +3,7 @@ name: Tests
 on:
   push:
     branches:
-      - master-ignore
+      - master
 
 jobs:
   test:
@@ -19,12 +19,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          submodules: true
           fetch-depth: 0
-
-      - name: Install premake5
-        uses: abel0b/setup-premake@v2.3
-        with:
-          version: "5.0.0-beta2"
 
       - name: Set up Python
         uses: actions/setup-python@v4

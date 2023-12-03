@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools==63.0.0", "wheel", "setuptools-git-versioning"]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core", "setuptools_scm"]
+build-backend = "scikit_build_core.build"
 
 [project]
 name = "itaxotools-popart-networks"
@@ -26,7 +26,7 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
-    "setuptools-git-versioning",
+    "setuptools_scm",
     "cibuildwheel",
     "pre-commit",
     "ruff",
@@ -38,10 +38,11 @@ dev = [
 Homepage = "https://itaxotools.org/"
 Source = "https://github.com/iTaxoTools/popart_networks"
 
-[tool.setuptools-git-versioning]
-dirty_template = "{tag}"
-dev_template = "{tag}"
-enabled = true
+[tool.scikit-build]
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+wheel.packages = ["src/itaxotools"]
+
+[tool.setuptools_scm]
 
 [tool.ruff]
 ignore-init-module-imports = true
