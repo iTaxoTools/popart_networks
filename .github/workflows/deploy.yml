@@ -48,7 +48,7 @@ jobs:
       - name: Build sdist
         run: |
           pipx run build --sdist
-          python -m twine check dist/*
+          pipx run twine check dist/*
 
       - uses: actions/upload-artifact@v3
         with:
