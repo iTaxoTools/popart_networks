@@ -39,7 +39,6 @@ jobs:
   build-sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
-    if: false
     steps:
       - uses: actions/checkout@v4
         with:
